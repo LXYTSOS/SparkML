@@ -63,12 +63,15 @@ object DimensionalityReduction {
     
     //Running PCA on the LFW dataset
     val matrix = new RowMatrix(scaledVectors)
+//    println(matrix.numRows(),matrix.numCols())
+    //(1054, 2500)
     val k = 10
     val pc = matrix.computePrincipalComponents(k)
     
     val rows = pc.numRows
     val cols = pc.numCols
 //    println(rows, cols)
+    //(2500,10)
     
     val pcBreeze = new DenseMatrix(rows, cols, pc.toArray)
     csvwrite(new File("F:/ScalaWorkSpace/data/pc.csv"), pcBreeze)
