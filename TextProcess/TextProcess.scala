@@ -38,5 +38,17 @@ object TextProcess {
 //    (alt.atheism,480)
 //    (talk.politics.misc,465)
 //    (talk.religion.misc,377)
+    
+    val whiteSpaceSplit = text.flatMap(t => t.split(" ").map(_.toLowerCase))
+//    println(whiteSpaceSplit.distinct().count())
+    //402978,花了20分钟得出结果......
+    
+//    println(whiteSpaceSplit.sample(true, 0.3, 42).take(100).mkString(","))
+    
+    val nonWordSplit = text.flatMap(t => t.split("""\W+""").map(_.toLowerCase))
+    //截取出字母、数字、下划线
+//    println(nonWordSplit.distinct.count)
+    //130126
+    println(nonWordSplit.sample(true, 0.3, 42).take(100).mkString(","))
   }
 }
