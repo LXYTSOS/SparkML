@@ -49,6 +49,41 @@ object TextProcess {
     //截取出字母、数字、下划线
 //    println(nonWordSplit.distinct.count)
     //130126
-    println(nonWordSplit.sample(true, 0.3, 42).take(100).mkString(","))
+//    println(nonWordSplit.sample(true, 0.3, 42).take(100).mkString(","))
+    
+    val regex = """[^0-9]*""".r
+    val filterNumbers = nonWordSplit.filter( token => regex.pattern.matcher(token).matches())
+//    println(filterNumbers.distinct().count())
+    //84912
+//    println(filterNumbers.sample(true, 0.3, 42).take(100).mkString(","))
+    
+    val tokenCounts = filterNumbers.map(t => (t,1)).reduceByKey(_ + _)
+    val oreringDesc = Ordering.by[(String, Int), Int](_._2)
+//    println(tokenCounts.top(20)(oreringDesc).mkString("\n"))
+    
+    //创建常用词集
+    val stopwords = Set(
+      "the","a","an","of","or","in","for","by","on","but", "is", "not",
+      "with", "as", "was", "if",
+      "they", "are", "this", "and", "it", "have", "from", "at", "my",
+      "be", "that", "to"
+    )
+    
+    //移除常用词
+    val tokenCountsFilteredStopwords = tokenCounts.filter{ case (k, v) => !stopwords.contains(k)}
+//    println(tokenCountsFilteredStopwords.top(20)(oreringDesc).mkString("\n"))
+    
+    //移除长度为一的
+    val tokenCountsFilteredSize = tokenCountsFilteredStopwords.filter{ case (k, v) => k.size >= 2 }
+//    println(tokenCountsFilteredSize.top(20)(oreringDesc).mkString("\n"))
+    
+    val oreringAsc = Ordering.by[(String, Int), Int](-_._2)
+//    println(tokenCountsFilteredSize.top(20)(oreringAsc).mkString("\n"))
+    
+    val rareTokens = tokenCounts.filter{ case (k, v) => v < 2}.map{ case (k, v) => k}.collect.toSet
+    val tokenCountsFilteredAll = tokenCountsFilteredSize.filter{case (k,v) => !rareTokens.contains(k)}
+//    println(tokenCountsFilteredAll.top(20)(oreringAsc).mkString("\n"))
+//    println(tokenCountsFilteredAll.count)
+    //51801
   }
 }
